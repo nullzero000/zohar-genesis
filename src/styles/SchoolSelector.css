@@ -1,0 +1,73 @@
+/* src/styles/SchoolSelector.css */
+
+.selector-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  padding: 0 10px;
+}
+
+.selector-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  
+  padding: 10px 20px;
+  background: rgba(10, 10, 15, 0.6); /* Base oscura */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  
+  color: var(--text-muted, #8888aa);
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+}
+
+/* Efecto Hover: Elevación sutil */
+.selector-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+/* Estado Activo: Luz encendida */
+.selector-btn.active {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.8);
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+}
+
+/* El punto de luz (Status Indicator) */
+.status-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0 0 transparent;
+}
+
+.selector-btn.active .status-indicator {
+  background-color: #00ffcc; /* Cian místico */
+  box-shadow: 0 0 8px #00ffcc;
+}
+
+/* Responsive: Ajuste para móviles */
+@media (max-width: 600px) {
+  .selector-btn {
+    flex: 1 1 40%; /* Botones más grandes en móvil */
+    font-size: 0.75rem;
+  }
+}

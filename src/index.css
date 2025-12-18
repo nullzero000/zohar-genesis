@@ -1,0 +1,47 @@
+/* --- RESET UNIVERSAL --- */
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #000000;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- ESTILOS GLOBALES --- */
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow: hidden; /* Evitar scrollbars */
+  background-color: #000; /* Fondo negro absoluto de seguridad */
+  
+  /* CURSOR ÁRBOL DE LA VIDA (COMPLETO - DORADO) */
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g fill="none" stroke="%23d4af37" stroke-width="1.1"><circle cx="16" cy="2.5" r="1.5"/><circle cx="16" cy="29.5" r="1.5"/><circle cx="6" cy="7.5" r="1.5"/><circle cx="26" cy="7.5" r="1.5"/><circle cx="6" cy="17.5" r="1.5"/><circle cx="26" cy="17.5" r="1.5"/><circle cx="16" cy="12.5" r="1.5"/><circle cx="16" cy="22.5" r="1.5"/><circle cx="11" cy="26" r="1.5"/><circle cx="21" cy="26" r="1.5"/><path d="M16 4v8.5M16 24v5.5M6 9v8.5M26 9v8.5M16 4L6 7.5M16 4l10 3.5M6 7.5l10 5M26 7.5l-10 5M6 17.5l5 8.5M26 17.5l-5 8.5M16 12.5l-10 5M16 12.5l10 5M16 14v8.5M11 26l5 3.5M21 26l-5 3.5M6 17.5h20M16 12.5l-5 13.5M16 12.5l5 13.5"/></g></svg>') 16 16, auto;
+}
+
+/* Asegurar que los elementos interactivos hereden el cursor místico */
+a, button, [role="button"], input, select, textarea {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g fill="none" stroke="%23d4af37" stroke-width="1.1"><circle cx="16" cy="2.5" r="1.5"/><circle cx="16" cy="29.5" r="1.5"/><circle cx="6" cy="7.5" r="1.5"/><circle cx="26" cy="7.5" r="1.5"/><circle cx="6" cy="17.5" r="1.5"/><circle cx="26" cy="17.5" r="1.5"/><circle cx="16" cy="12.5" r="1.5"/><circle cx="16" cy="22.5" r="1.5"/><circle cx="11" cy="26" r="1.5"/><circle cx="21" cy="26" r="1.5"/><path d="M16 4v8.5M16 24v5.5M6 9v8.5M26 9v8.5M16 4L6 7.5M16 4l10 3.5M6 7.5l10 5M26 7.5l-10 5M6 17.5l5 8.5M26 17.5l-5 8.5M16 12.5l-10 5M16 12.5l10 5M16 14v8.5M11 26l5 3.5M21 26l-5 3.5M6 17.5h20M16 12.5l-5 13.5M16 12.5l5 13.5"/></g></svg>') 16 16, pointer;
+}
+
+/* --- CLASES UTILITARIAS DE SEGURIDAD --- */
+/* (Por si algún componente antiguo las busca) */
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.block { display: block; }
+.pointer-events-none { pointer-events: none; }
