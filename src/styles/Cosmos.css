@@ -1,0 +1,73 @@
+.cosmos-container {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: #050200; /* Fondo cálido muy oscuro */
+    z-index: -1;
+}
+
+/* NÚCLEO DIVINO */
+.cosmos-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, 
+        rgba(255, 255, 240, 0.9) 0%, 
+        rgba(255, 215, 0, 0.4) 25%, 
+        rgba(200, 100, 50, 0.1) 60%, 
+        transparent 80%
+    );
+    filter: blur(80px);
+    opacity: 0.8;
+    animation: breatheLight 8s infinite ease-in-out;
+}
+
+/* RAYOS DE LUZ (God Rays) */
+.god-rays {
+    position: absolute;
+    inset: -100%;
+    background: conic-gradient(
+        from 0deg, 
+        transparent 0deg, 
+        rgba(255, 215, 0, 0.08) 20deg, 
+        transparent 40deg, 
+        rgba(255, 255, 255, 0.05) 60deg, 
+        transparent 90deg,
+        rgba(255, 200, 100, 0.05) 120deg,
+        transparent 150deg
+    );
+    animation: spinRays 120s linear infinite;
+    mix-blend-mode: screen;
+}
+
+/* POLVO DE ORO */
+.gold-dust {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        radial-gradient(1px 1px at 10% 10%, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 20% 30%, rgba(255,215,0,0.6), transparent),
+        radial-gradient(2px 2px at 50% 50%, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1px 1px at 80% 80%, rgba(255,200,100,0.5), transparent);
+    background-size: 300px 300px;
+    opacity: 0.5;
+    animation: dustDrift 30s linear infinite alternate;
+}
+
+@keyframes breatheLight { 
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; } 
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 
+}
+
+@keyframes spinRays { 
+    from { transform: rotate(0deg); } 
+    to { transform: rotate(360deg); } 
+}
+
+@keyframes dustDrift { 
+    from { transform: translateY(0); } 
+    to { transform: translateY(-20px); } 
+}

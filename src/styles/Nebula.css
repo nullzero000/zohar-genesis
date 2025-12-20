@@ -1,0 +1,48 @@
+.nebula-container {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: #050010;
+    z-index: -1;
+}
+
+.nebula-gas {
+    position: absolute;
+    inset: -50%;
+    width: 200%; height: 200%;
+    background-size: 100% 100%;
+    mix-blend-mode: screen;
+    opacity: 0.6;
+    animation: driftNebula 60s linear infinite alternate;
+}
+
+.nebula-gas.layer-1 {
+    background-image: radial-gradient(circle at 30% 40%, rgba(255, 0, 150, 0.25), transparent 50%),
+                      radial-gradient(circle at 70% 60%, rgba(0, 100, 255, 0.25), transparent 50%);
+    filter: blur(50px);
+}
+
+.nebula-gas.layer-2 {
+    background-image: radial-gradient(circle at 60% 30%, rgba(50, 255, 100, 0.15), transparent 40%),
+                      radial-gradient(circle at 20% 80%, rgba(150, 50, 255, 0.15), transparent 40%);
+    filter: blur(60px) hue-rotate(90deg);
+    animation-duration: 80s;
+    animation-direction: alternate-reverse;
+}
+
+.nebula-stars {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        radial-gradient(1px 1px at 10% 10%, #fff, transparent),
+        radial-gradient(1px 1px at 20% 30%, #fff, transparent),
+        radial-gradient(2px 2px at 50% 50%, #fff, transparent),
+        radial-gradient(2px 2px at 90% 80%, #fff, transparent);
+    background-size: 400px 400px;
+    opacity: 0.6;
+}
+
+@keyframes driftNebula { 
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-5%, -5%) rotate(5deg); }
+}

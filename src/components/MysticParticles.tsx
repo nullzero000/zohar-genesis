@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { getHebrewColor, type KabbalahSchool } from '../data/kabbalah';
+import { type KabbalahSchool } from '../data/kabbalah';
 
 interface MysticParticlesProps {
   text: string;
@@ -11,153 +11,149 @@ interface MysticParticlesProps {
 interface Particle {
   x: number;
   y: number;
-  size: number;
   vx: number;
   vy: number;
+  size: number;
+  alpha: number;       // Opacidad actual
+  targetAlpha: number; // Opacidad objetivo (0 o visible)
+  pulse: number;
   char: string;
   color: string;
-  baseAlpha: number; 
-  pulseSpeed: number;
-  pulseOffset: number;
-  // NUEVAS PROPIEDADES PARA EL CICLO DE VIDA
-  textIndex: number; // A qué letra pertenece
-  dying: boolean;    // Si está en proceso de desaparecer
 }
 
 export const MysticParticles = ({ text, school }: MysticParticlesProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
   const particlesRef = useRef<Particle[]>([]);
-  const prevTextLength = useRef(text.length); 
-  
-  const chars = 'אבגדהוזחטיכלמנסעפצקרשת'; 
+  const initializedRef = useRef(false);
 
-  // Función para crear partícula vinculada a un índice
-  const createParticle = (width: number, height: number, textIndex: number, specificChar?: string, specificColor?: string): Particle => {
-    const char = specificChar || chars[Math.floor(Math.random() * chars.length)];
-    const color = specificColor || getHebrewColor(char, school);
+  // AXIOMA: Densidad 2X. 30 partículas doradas por cada letra escrita.
+  const PARTICLES_PER_CHAR = 30;
+  // Capacidad máxima suficiente para textos largos con la nueva densidad
+  const MAX_POOL = 60 * PARTICLES_PER_CHAR; 
 
-    return {
-      x: Math.random() * width,
-      y: Math.random() * height,
-      size: Math.random() * 4 + 8, // 8px a 12px
-      char: char,
-      color: color,
-      vx: (Math.random() - 0.5) * 0.1, 
-      vy: (Math.random() - 0.5) * 0.1,
-      baseAlpha: Math.random() * 0.3 + 0.1, 
-      pulseSpeed: Math.random() * 0.02 + 0.005, 
-      pulseOffset: Math.random() * Math.PI * 2,
-      
-      // VINCULACIÓN
-      textIndex: textIndex,
-      dying: false
-    };
-  };
-
-  // --- LÓGICA DE NACIMIENTO Y MUERTE ---
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    // A. NACIMIENTO: Si escribimos algo nuevo
-    if (text.length > prevTextLength.current) {
-      const newChar = text[text.length - 1];
-      const newColor = getHebrewColor(newChar, school);
-      const newIndex = text.length - 1;
-
-      // Añadimos partículas vinculadas a este índice
-      for (let i = 0; i < 5; i++) {
-        particlesRef.current.push(createParticle(canvas.width, canvas.height, newIndex, newChar, newColor));
-      }
-    }
-    
-    // B. MUERTE: Si borramos (backspace o clear)
-    if (text.length < prevTextLength.current) {
-      // Marcamos como 'dying' a todas las partículas cuyo índice ya no existe
-      particlesRef.current.forEach(p => {
-        if (p.textIndex >= text.length) {
-          p.dying = true;
-        }
-      });
-    }
-
-    prevTextLength.current = text.length;
-  }, [text, school]);
-
-  // --- LOOP VISUAL ---
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      // No reiniciamos al resize para no perder el estado actual
-    };
-    
-    window.addEventListener('resize', handleResize);
-    handleResize();
+    if (!initializedRef.current) {
+      const resize = () => {
+        canvas.width = window.innerWidth * window.devicePixelRatio;
+        canvas.height = window.innerHeight * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+      };
+      resize();
+      window.addEventListener('resize', resize);
+
+      // INICIALIZACIÓN: Todo empieza INVISIBLE (Vacío)
+      for (let i = 0; i < MAX_POOL; i++) {
+        particlesRef.current.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          vx: (Math.random() - 0.5) * 0.2, // Movimiento flotante suave
+          vy: (Math.random() - 0.5) * 0.2,
+          size: Math.random() * 12 + 8, // Tamaño que te gustó
+          alpha: 0, // Empiezan ocultas
+          targetAlpha: 0,
+          pulse: Math.random() * 0.01 + 0.002,
+          char: '', // Sin letra asignada aún
+          color: 'rgba(255, 235, 180' // Base dorada
+        });
+      }
+      initializedRef.current = true;
+    }
+
+    let animationId: number;
 
     const animate = () => {
-      if (!canvas || !ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Limpieza total
+      ctx.clearRect(0, 0, canvas.width / window.devicePixelRatio, canvas.height / window.devicePixelRatio);
+      
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
 
-      // Iteramos hacia atrás para poder eliminar elementos del array sin romper el índice
-      for (let i = particlesRef.current.length - 1; i >= 0; i--) {
-        const p = particlesRef.current[i];
+      // 1. Lógica de Fading (Interpolación)
+      particlesRef.current.forEach(p => {
+        // Suavizado hacia el objetivo
+        p.alpha += (p.targetAlpha - p.alpha) * 0.08;
+      });
 
-        // 1. GESTIÓN DE MUERTE
-        if (p.dying) {
-          p.baseAlpha -= 0.05; // Se desvanece rápido
-          if (p.baseAlpha <= 0) {
-            particlesRef.current.splice(i, 1); // Eliminar de la memoria
-            continue; // Saltar al siguiente ciclo
-          }
-        }
+      // 2. Renderizado
+      particlesRef.current.forEach((p) => {
+        // Optimización: Si es invisible, no procesar física ni dibujo
+        if (p.alpha < 0.01) return;
 
-        // 2. MOVIMIENTO
+        // Física
         p.x += p.vx;
         p.y += p.vy;
-
-        // Wrap around
-        if (p.x < -20) p.x = canvas.width + 20;
-        if (p.x > canvas.width + 20) p.x = -20;
-        if (p.y < -20) p.y = canvas.height + 20;
-        if (p.y > canvas.height + 20) p.y = -20;
-
-        // 3. RENDERIZADO
-        ctx.font = `${p.size}px "Times New Roman", serif`;
-        ctx.fillStyle = p.color;
-
-        // Parpadeo
-        const pulse = Math.sin(Date.now() * 0.001 * p.pulseSpeed + p.pulseOffset);
-        // Si está muriendo, usamos el baseAlpha que está decreciendo, si no, el pulso normal
-        const currentAlpha = p.dying ? p.baseAlpha : (p.baseAlpha + (pulse * 0.05)); 
         
-        ctx.globalAlpha = Math.max(0, Math.min(1, currentAlpha));
+        // Loop infinito en pantalla
+        if (p.x < -20) p.x = window.innerWidth + 20;
+        if (p.x > window.innerWidth + 20) p.x = -20;
+        if (p.y < -20) p.y = window.innerHeight + 20;
+        if (p.y > window.innerHeight + 20) p.y = -20;
 
+        // Pulsación sutil sobre la opacidad base
+        const currentAlpha = p.alpha + Math.sin(Date.now() * p.pulse) * 0.1;
+        // Clamp entre 0 y 1
+        const finalAlpha = Math.max(0, Math.min(1, currentAlpha));
+
+        // RENDERIZADO DE LETRA (Estilo Dorado que te gustó)
+        ctx.font = `${p.size}px "Times New Roman"`;
+        ctx.fillStyle = `${p.color}, ${finalAlpha})`;
+        
+        // Sombra suave dorada
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = `rgba(255, 215, 0, ${finalAlpha * 0.5})`;
+        
         ctx.fillText(p.char, p.x, p.y);
+        
+        ctx.shadowBlur = 0; // Reset
+      });
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animate();
+    return () => cancelAnimationFrame(animationId);
+  }, []);
+
+  // LÓGICA REACTIVA: Conecta el Input con el Pool de Partículas
+  useEffect(() => {
+    particlesRef.current.forEach((p, index) => {
+      // Dividimos el pool en grupos de 30 (Nueva densidad).
+      const charIndex = Math.floor(index / PARTICLES_PER_CHAR);
+      
+      if (charIndex < text.length) {
+        // ESTADO ACTIVO: Asignamos la letra que escribiste
+        p.char = text[charIndex];
+        
+        // Si estaba "dormida" (targetAlpha 0), la despertamos
+        if (p.targetAlpha === 0) {
+           // Opcional: Reubicarla aleatoriamente para que parezca nacer
+           p.x = Math.random() * window.innerWidth;
+           p.y = Math.random() * window.innerHeight;
+           // Le damos una opacidad visible aleatoria
+           p.targetAlpha = Math.random() * 0.5 + 0.2; 
+        }
+      } else {
+        // ESTADO INACTIVO: Apagar suavemente
+        p.targetAlpha = 0;
       }
-
-      requestAnimationFrame(animate);
-    };
-
-    const animId = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animId);
-    };
-  }, [school]); 
+    });
+  }, [text, school]); 
 
   return (
     <canvas 
-      ref={canvasRef} 
-      className="block pointer-events-none"
-      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: 'transparent' }} 
+      ref={canvasRef}
+      style={{ 
+        position: 'absolute', inset: 0, 
+        pointerEvents: 'none',
+        mixBlendMode: 'screen'
+      }} 
     />
   );
 };

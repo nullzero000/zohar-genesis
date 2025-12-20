@@ -1,0 +1,129 @@
+/* src/components/gematria/VectorialData.css */
+
+.vectorial-container {
+  width: 95%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 0 120px 0;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.vectorial-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px 20px;
+  margin-bottom: 0;
+  /* AXIOMA: Fondo transparente */
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 2px solid #d4af37;
+  border-radius: 8px 8px 0 0;
+}
+
+.vectorial-title {
+  color: #ccc;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.terminal-table {
+  width: 100%;
+  border-collapse: collapse;
+  /* AXIOMA: Fondo de Vidrio Ahumado */
+  background: rgba(10, 10, 10, 0.4); 
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: none;
+}
+
+.terminal-table th {
+  text-align: left;
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  color: #888;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.terminal-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s;
+}
+
+.terminal-row:hover {
+  background: rgba(255, 255, 255, 0.05); /* Highlight sutil */
+}
+
+/* COLUMNAS */
+.cell-lvl {
+  color: #d4af37;
+  font-weight: bold;
+  vertical-align: top;
+  padding: 20px;
+  width: 60px;
+  font-size: 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cell-seq {
+  padding: 20px;
+  color: #eee; /* Texto más brillante para contraste */
+  font-size: 13px;
+  line-height: 1.8;
+  text-align: right;
+  direction: rtl; 
+  word-spacing: 5px;
+  letter-spacing: 1px;
+  font-family: 'Times New Roman', serif;
+  text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.cell-vector {
+  vertical-align: top;
+  padding: 20px;
+  width: 220px;
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.vector-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+}
+
+.color-swatch {
+  width: 16px; 
+  height: 16px; 
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.cell-gem {
+  vertical-align: top;
+  padding: 20px;
+  text-align: right;
+  width: 100px;
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gem-primary {
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  display: block;
+}
+
+.gem-total {
+  color: #888;
+  font-size: 10px;
+  font-family: monospace;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

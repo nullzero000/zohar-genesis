@@ -1,0 +1,128 @@
+/* EL ESPACIO PROFUNDO */
+.gargantua-container {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    perspective: 1500px; /* Perspectiva profunda para el 3D */
+    z-index: -1;
+}
+
+/* --- EL AGUJERO (EVENT HORIZON) --- */
+.event-horizon {
+    position: relative;
+    width: 25vw;
+    height: 25vw;
+    background: #000;
+    border-radius: 50%;
+    z-index: 10; /* En medio de todo */
+    box-shadow: 
+        inset 0 0 60px rgba(0,0,0,1),
+        0 0 100px rgba(255, 120, 0, 0.2); /* Glow tenue alrededor */
+}
+
+/* ANILLO DE FOTONES (El borde blanco filoso) */
+.photon-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 102%; height: 102%;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.6),
+        inset 0 0 10px rgba(255, 200, 100, 0.5);
+    opacity: 0.9;
+    filter: blur(0.5px);
+}
+
+/* --- DISCO DE ACRECIÓN (FLAT SPINNING) --- */
+/* Definimos el gradiente maestro del disco */
+.accretion-disk-back, .accretion-disk-front {
+    position: absolute;
+    width: 65vw;
+    height: 65vw;
+    border-radius: 50%;
+    /* El gradiente simula las bandas de gas caliente */
+    background: radial-gradient(
+        transparent 35%, 
+        rgba(255, 240, 200, 0.9) 38%, /* Borde interior caliente (Blanco/Amarillo) */
+        rgba(255, 150, 0, 0.8) 45%,   /* Cuerpo Naranja */
+        rgba(200, 50, 0, 0.4) 60%,    /* Borde exterior Rojo/Oscuro */
+        transparent 70%
+    );
+    /* Inclinación estilo Interstellar */
+    transform: rotateX(82deg); 
+}
+
+.accretion-disk-back {
+    z-index: 5; /* Detrás del agujero */
+    filter: blur(8px) brightness(0.8);
+    animation: spinGalactic 60s linear infinite;
+}
+
+.accretion-disk-front {
+    z-index: 15; /* Enfrente del agujero */
+    /* Cortamos la mitad superior para que no tape el agujero incorrectamente */
+    /* Usamos clip-path para mostrar solo la parte "delantera" visualmente */
+    clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0% 100%);
+    filter: blur(2px) contrast(1.2) brightness(1.2);
+    animation: spinGalactic 60s linear infinite;
+}
+
+/* --- LENTE GRAVITACIONAL (LA LUZ CURVADA) --- */
+/* Esta es la clave de Gargantua: el arco superior e inferior */
+
+.gravitational-lensing-top {
+    position: absolute;
+    width: 32vw;
+    height: 30vw; /* Ligeramente achatado */
+    border-top: 4vw solid rgba(255, 200, 100, 0.4); /* Arco de luz */
+    border-radius: 50%;
+    top: 50%;
+    transform: translate(0, -65%); /* Subir para formar el arco superior */
+    z-index: 4; /* Detrás del agujero, pero visible arriba */
+    filter: blur(10px);
+    box-shadow: 0 -10px 30px rgba(255, 100, 0, 0.6);
+    opacity: 0.8;
+}
+
+.gravitational-lensing-bottom {
+    position: absolute;
+    width: 32vw;
+    height: 25vw;
+    border-bottom: 8vw solid rgba(255, 150, 50, 0.3); /* Arco inferior más grueso y difuso */
+    border-radius: 50%;
+    top: 50%;
+    transform: translate(0, -35%); /* Bajar */
+    z-index: 4;
+    filter: blur(15px);
+    box-shadow: 0 10px 40px rgba(200, 50, 0, 0.5);
+    opacity: 0.7;
+}
+
+/* --- MOVIMIENTO Y VIDA --- */
+@keyframes spinGalactic {
+    from { transform: rotateX(82deg) rotate(0deg); }
+    to { transform: rotateX(82deg) rotate(360deg); }
+}
+
+/* Partículas de escombros cayendo */
+.debris-field {
+    position: absolute;
+    inset: -50%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+    animation: grainShift 2s steps(4) infinite;
+    z-index: 20;
+    pointer-events: none;
+}
+
+@keyframes grainShift {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(-10px, 10px); }
+}

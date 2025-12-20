@@ -1,73 +1,63 @@
-/* src/styles/SchoolSelector.css */
-
-.selector-container {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  padding: 0 10px;
+.school-navbar {
+    display: flex;
+    justify-content: center;
+    gap: 3rem; /* Espacio generoso entre iconos */
+    padding: 10px 0;
+    width: 100%;
 }
 
-.selector-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  
-  padding: 10px 20px;
-  background: rgba(10, 10, 15, 0.6); /* Base oscura */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  
-  color: var(--text-muted, #8888aa);
-  font-family: inherit;
-  font-size: 0.85rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  backdrop-filter: blur(8px);
-  overflow: hidden;
+.school-nav-btn {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    position: relative;
+    opacity: 0.3; /* Por defecto muy sutil */
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    width: auto;
+    padding: 10px;
 }
 
-/* Efecto Hover: Elevación sutil */
-.selector-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #e0e0e0;
-  transform: translateY(-2px);
+.school-nav-btn:hover {
+    opacity: 0.7;
+    transform: translateY(-2px);
 }
 
-/* Estado Activo: Luz encendida */
-.selector-btn.active {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.8);
-  color: #ffffff;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+.school-nav-btn.active {
+    opacity: 1;
+    transform: scale(1.1);
 }
 
-/* El punto de luz (Status Indicator) */
-.status-indicator {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: transparent;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 0 0 transparent;
+.icon-wrapper {
+    width: 28px;
+    height: 28px;
+    color: #fff;
+    transition: all 0.3s;
 }
 
-.selector-btn.active .status-indicator {
-  background-color: #00ffcc; /* Cian místico */
-  box-shadow: 0 0 8px #00ffcc;
+/* Color dorado cuando está activo */
+.school-nav-btn.active .icon-wrapper {
+    color: #D4AF37; 
+    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.8));
 }
 
-/* Responsive: Ajuste para móviles */
-@media (max-width: 600px) {
-  .selector-btn {
-    flex: 1 1 40%; /* Botones más grandes en móvil */
-    font-size: 0.75rem;
-  }
+.school-label {
+    font-family: 'Cinzel', serif; /* O la fuente que uses para titulos */
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: #ccc;
+    text-transform: uppercase;
+    margin-top: 5px;
+}
+
+.active-glow {
+    position: absolute;
+    bottom: -5px;
+    width: 30px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+    box-shadow: 0 -2px 10px rgba(212, 175, 55, 0.5);
 }

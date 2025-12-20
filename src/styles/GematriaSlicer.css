@@ -1,0 +1,157 @@
+/* src/components/gematria/GematriaSlicer.css */
+
+.slicer-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* --- NAVEGACIÓN (TABS) --- */
+.tabs-container {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  scrollbar-width: none; /* Firefox */
+}
+.tabs-container::-webkit-scrollbar { display: none; }
+
+.tactical-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #666;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.tactical-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.tactical-btn.active {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: #d4af37;
+  color: #d4af37;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+  transform: translateY(-1px);
+}
+
+/* --- HEADER DE CONTEXTO --- */
+.context-header {
+  border-left-width: 4px;
+  border-left-style: solid;
+  padding: 15px 20px;
+  border-radius: 0 8px 8px 0;
+  backdrop-filter: blur(10px);
+  transition: border-color 0.5s ease, background 0.5s ease;
+}
+
+.world-title {
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.2em;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.world-focus {
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  opacity: 0.8;
+}
+
+.world-desc {
+  font-size: 11px;
+  color: #aaa;
+  font-style: italic;
+  margin-top: 5px;
+}
+
+/* --- GRID DE ESTADÍSTICAS --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.stat-box {
+  background: rgba(10, 10, 10, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  backdrop-filter: blur(5px);
+  transition: transform 0.3s ease;
+}
+.stat-box:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.box-label {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: #555;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+/* Frecuencia Visual */
+.frequency-row {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+  height: 60px;
+  justify-content: center;
+}
+
+.freq-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hebrew-char {
+  font-family: "Times New Roman", serif;
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* Síntesis de Datos */
+.data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.data-label { font-size: 9px; color: #444; display: block; margin-bottom: 2px; }
+.data-val { font-size: 11px; color: #ddd; }
+
+/* Bloque Toráico */
+.torah-container {
+  flex-direction: row;
+  align-items: center;
+  gap: 25px;
+}
+
+.torah-char {
+  font-size: 80px;
+  font-family: "Times New Roman", serif;
+  line-height: 1;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

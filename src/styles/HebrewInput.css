@@ -1,103 +1,181 @@
-/* src/styles/HebrewInput.css */
+/* =========================================
+   EJE 13: PANTALLA DE MANIFESTACIÓN & INPUT
+   ========================================= */
 
-.hebrew-input-wrapper {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto 40px auto;
+/* CONTENEDOR BASE (Modo Origen) */
+.input-wrapper {
   position: relative;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.mystic-display {
-  flex-grow: 1;
-  min-height: 90px;
-  padding: 10px 30px;
-  
-  /* Glass Effect */
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  
-  box-shadow: 
-    0 4px 30px rgba(0, 0, 0, 0.1),
-    inset 0 0 20px rgba(255, 255, 255, 0.02);
-
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; /* RTL handling */
-  flex-wrap: wrap;
-  gap: 5px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.mystic-display:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 40px rgba(255, 255, 255, 0.05);
-}
-
-.mystic-char {
-  font-family: 'Times New Roman', serif;
-  font-size: 3.5rem;
-  font-weight: 200;
-  line-height: 1;
-  
-  /* Color dinámico */
-  color: var(--char-color);
-  
-  /* Sombra de neón fija */
-  text-shadow: 
-    0 0 10px var(--char-color),
-    0 0 30px var(--char-color);
-    
-  /* --- CAMBIO: SE ELIMINÓ LA ANIMACIÓN 'fadeInChar' --- */
-  /* Ahora la letra aparece instantáneamente */
-}
-
-.placeholder {
-  color: rgba(255, 255, 255, 0.15);
-  font-size: 1.2rem;
-  font-weight: 300;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  font-family: sans-serif;
-}
-
-/* Botón de Borrar */
-.delete-btn {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 100, 100, 0.7);
-  
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.2s ease; /* Transición rápida solo para el hover del botón */
-  backdrop-filter: blur(5px);
-  
+  width: 90vw;
+  max-width: 800px;
+  min-height: 180px; 
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+  z-index: 20;
+  
+  /* EFECTO ESPEJO / CRISTAL AHUMADO */
+  /* Un fondo negro semitransparente */
+  background: rgba(0, 0, 0, 0.4);
+  /* El filtro que hace la magia: desenfoca y oscurece el fondo */
+  backdrop-filter: blur(10px) brightness(0.8);
+  
+  /* Bordes suaves y sutil contención de luz */
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-.delete-btn:hover {
-  background: rgba(255, 50, 50, 0.2);
-  color: #fff;
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-  border-color: transparent;
+/* El resto del archivo CSS permanece igual... */
+/* ... (manifest-mode, hebrew-display-container, etc.) ... */
+/* =========================================
+   EJE 13: PANTALLA DE MANIFESTACIÓN & INPUT
+   ========================================= */
+
+/* CONTENEDOR BASE (Modo Origen) */
+.input-wrapper {
+  position: relative;
+  width: 90vw;
+  max-width: 800px;
+  min-height: 180px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+  z-index: 20;
+  
+  /* EFECTO ESPEJO / CRISTAL AHUMADO */
+  background: rgba(0, 0, 0, 0.4); /* Fondo base semitransparente */
+  backdrop-filter: blur(15px) saturate(120%); /* Desenfoca lo que hay detrás */
+  -webkit-backdrop-filter: blur(15px) saturate(120%); /* Soporte para Safari */
+  
+  /* Definición sutil del área */
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.02);
 }
 
-.delete-btn:active {
-  transform: scale(0.95);
+/* MODO PANTALLA COMPLETA (Manifestación) */
+.manifest-mode {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  background: transparent !important;
+  border: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+  padding: 5vw;
+  z-index: 9999; 
 }
+
+.hebrew-display-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; 
+}
+
+/* FLEXBOX DE LETRAS */
+.letters-flex-container {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  direction: rtl;
+  width: 100%;
+}
+
+/* LETRAS (Estado Base) */
+.hebrew-char {
+  font-family: 'Times New Roman', serif;
+  line-height: 1;
+  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-size: clamp(3rem, 6vw, 5rem); 
+}
+
+/* LETRAS (Estado Manifestación) */
+.manifest-mode .hebrew-char {
+  font-size: clamp(5rem, 18vmin, 20rem);
+  animation: levitateChar 5s ease-in-out infinite;
+}
+
+/* BOTÓN BORRAR */
+.delete-btn-premium {
+  position: absolute;
+  left: 20px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.2);
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 30;
+}
+.delete-btn-premium:hover {
+  color: rgba(200, 50, 50, 0.8);
+  transform: scale(1.1);
+}
+
+/* ESTADO VACÍO */
+.empty-state-breathing {
+  font-family: monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  color: rgba(255,255,255,0.15);
+  animation: iosBreathe 4s infinite ease-in-out;
+  text-transform: uppercase;
+}
+
+/* CAPAS DE LUZ SOPHIA (Fondo) */
+.ein-sof-layer {
+  position: fixed;
+  top: 50%; left: 50%;
+  width: 150vmax; height: 150vmax;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 240, 200, 0.2) 30%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -10;
+  mix-blend-mode: screen;
+  transition: opacity 1.5s ease;
+}
+
+.manifest-mode .ein-sof-layer {
+  opacity: 1;
+  animation: pulseLight 8s infinite ease-in-out;
+}
+
+.rays-layer {
+  position: fixed;
+  top: 50%; left: 50%;
+  width: 200vmax; height: 200vmax;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.08) 20deg, transparent 40deg, rgba(212, 175, 55, 0.08) 60deg, transparent 90deg);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -11;
+}
+
+.manifest-mode .rays-layer {
+  opacity: 1;
+  animation: rotateRays 120s linear infinite;
+}
+
+/* ANIMACIONES */
+@keyframes levitateChar { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(1.05); } }
+@keyframes pulseLight { 0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } }
+@keyframes rotateRays { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes iosBreathe { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.5; } }

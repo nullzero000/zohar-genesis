@@ -1,51 +1,222 @@
-/* src/styles/Home.css */
+/* =========================================
+   AXIS 13: ESTRUCTURA PRINCIPAL
+   ========================================= */
 
-.home-page {
-  width: 100%;
-  max-width: 1200px;
-  min-height: 100vh; /* Ocupa toda la pantalla */
-  margin: 0 auto;
-  padding: 20px;
-  
-  /* Centrado perfecto Flexbox */
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Centrado Vertical */
-  align-items: center;     /* Centrado Horizontal */
+/* FONTS & BASICS */
+.main-container {
+    position: fixed; 
+    inset: 0; 
+    width: 100dvw; 
+    height: 100dvh;
+    overflow: hidden; 
+    background-color: #030303; 
+    font-family: 'Times New Roman', serif;
+    display: flex; 
+    flex-direction: column;
 }
 
-.home-header {
-  text-align: center;
-  margin-bottom: 3rem;
-  animation: fadeIn 1s ease-in;
+/* CAPAS DE FONDO */
+.visual-layer {
+    position: fixed; inset: 0; z-index: 0; 
+    /* Importante: pointer-events none para que el fondo nunca robe clics */
+    pointer-events: none; 
 }
 
-.home-title {
-  font-size: 3rem;
-  font-weight: 200; /* Letra fina elegante */
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(to right, #fff, #888);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 30px rgba(255,255,255,0.1);
+.vignette-layer {
+    position: fixed; inset: 0; z-index: 1; 
+    background: radial-gradient(circle at center, transparent 20%, #000 110%);
+    pointer-events: none;
 }
 
-.home-subtitle {
-  color: var(--text-muted);
-  font-size: 1rem;
-  font-weight: 300;
-  letter-spacing: 1px;
+/* WRAPPER DEL CONTENIDO */
+.content-wrapper {
+    position: relative; 
+    z-index: 10; 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%;
+    /* Permitir clicks en los hijos, pero no en el wrapper vacío */
+    pointer-events: none; 
 }
 
-/* Responsividad para móviles */
-@media (max-width: 768px) {
-  .home-title { font-size: 2rem; }
-  .home-page { justify-content: flex-start; padding-top: 40px; }
+/* =========================================
+   HEADER & TITULOS
+   ========================================= */
+.header-section {
+    flex-shrink: 0; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding-top: max(30px, env(safe-area-inset-top));
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 1;
+    pointer-events: auto; /* Reactivar clicks */
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+.header-section.collapsed {
+    height: 0;
+    opacity: 0;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.axis-title {
+    font-size: 0.8rem;
+    letter-spacing: 0.8em;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    margin: 0;
+    font-family: 'Cinzel', serif; 
+    text-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+
+.axis-number {
+    color: #D4AF37;
+    opacity: 0.8;
+}
+
+/* DIVISORES QUANTUM */
+.quantum-divider {
+    width: 100%;
+    max-width: 400px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+    margin: 1.5rem auto;
+    border: none;
+}
+
+/* =========================================
+   AREA CENTRAL
+   ========================================= */
+.center-stage {
+    flex-grow: 1; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    position: relative; 
+    width: 100%; 
+    overflow: hidden;
+    pointer-events: none; /* El stage no bloquea, el input dentro sí tendrá auto */
+}
+
+/* =========================================
+   FOOTER & CONTROLES
+   ========================================= */
+.footer-section {
+    flex-shrink: 0; 
+    padding-bottom: max(30px, env(safe-area-inset-bottom));
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 25px;
+    
+    /* CORRECCIÓN CRÍTICA DE Z-INDEX */
+    position: relative;
+    z-index: 1000; /* Por encima de cualquier agujero negro */
+    pointer-events: auto; /* Asegura que los botones reciban el clic */
+    
+    background: linear-gradient(to top, #000 0%, transparent 100%);
+    padding-top: 40px;
+}
+
+/* BOTÓN MANIFESTAR (TEXTO LUZ) */
+.manifest-trigger-text {
+    background: transparent;
+    border: none;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.5s ease;
+    padding: 10px 30px;
+}
+
+.manifest-trigger-text:hover {
+    color: #fff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.4em;
+}
+
+/* BOTONES VISUALES & SUBMODOS */
+.visual-toggles-row, .mode-selector-row {
+    display: flex;
+    gap: 20px;
+    /* Aseguramos que la fila también esté arriba */
+    position: relative;
+    z-index: 1001; 
+}
+
+.mode-selector-row.fade-in {
+    animation: fadeInRow 1s ease forwards;
+}
+
+.visual-toggle-btn, .glass-text-btn {
+    background: transparent;
+    border: none;
+    color: #555;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 5px 10px;
+}
+
+.visual-toggle-btn:hover, .glass-text-btn:hover {
+    color: #888;
+}
+
+.visual-toggle-btn.active, .glass-text-btn.active {
+    color: #D4AF37;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
+/* =========================================
+   NAVEGACIÓN LATERAL
+   ========================================= */
+.nav-arrow {
+    position: absolute;
+    bottom: 40px;
+    z-index: 2000; /* Flechas de navegación siempre accesibles */
+    pointer-events: auto;
+}
+.nav-arrow.left { left: 40px; }
+.nav-arrow.right { right: 40px; }
+
+.nav-icon-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 50px; height: 50px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: all 0.4s ease;
+}
+
+.nav-icon-btn:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.3);
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.nav-icon-btn.gold {
+    border-color: rgba(212, 175, 55, 0.3);
+    color: rgba(212, 175, 55, 0.8);
+}
+.nav-icon-btn.gold:hover {
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+    color: #D4AF37;
+}
+
+@keyframes fadeInRow {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

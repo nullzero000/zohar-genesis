@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getHebrewColor, type KabbalahSchool } from '../data/kabbalah';
 
 interface HebrewGalaxyProps {
@@ -8,206 +8,138 @@ interface HebrewGalaxyProps {
   school: KabbalahSchool;
 }
 
-interface Particle {
-  x: number; y: number; z: number;
-  char: string; size: number; color: string;
-  vx: number; vy: number;
-  rotation: number; rotationSpeed: number;
-  alpha: number;
-  textIndex: number; dying: boolean;
-}
-
-interface FireParticle {
-  x: number; y: number;
-  vy: number; 
-  life: number; maxLife: number;
-  size: number;
-  char: string; color: string;
-  rotation: number; rotationSpeed: number;
+interface Star {
+  id: number;
+  angle: number;
+  radius: number;
+  depth: number;
+  sizeBase: number;
+  speed: number;
+  char: string;
+  color: string;
+  currentOpacity: number;
+  targetOpacity: number;
 }
 
 export const HebrewGalaxy = ({ text, school }: HebrewGalaxyProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [stars, setStars] = useState<Star[]>([]);
+  const requestRef = useRef<number>(0);
   
-  const particlesRef = useRef<Particle[]>([]);
-  const fireRef = useRef<FireParticle[]>([]);
-  const textRef = useRef(text);
-  const schoolRef = useRef(school);
-  
-  // CORRECCIÓN: Inicializar con text.length actual evita el spawn masivo en (0,0) al cambiar de tab
-  const prevTextLength = useRef(text.length);
+  // AXIOMA: Cobertura Total Uniforme
+  const STARS_PER_CHAR = 40; 
+  const POOL_SIZE = 1200; 
 
-  // 1. SINCRONIZACIÓN DE REF (DATOS)
   useEffect(() => {
-    textRef.current = text;
-    schoolRef.current = school;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    // Solo spawnear si realmente estamos escribiendo NUEVAS letras
-    if (text.length > prevTextLength.current) {
-      // Diferencia real de letras (por si pegan texto)
-      const newCharsCount = text.length - prevTextLength.current;
+    const initialStars: Star[] = Array.from({ length: POOL_SIZE }).map((_, i) => {
       
-      // Solo procesamos las nuevas
-      for (let j = 0; j < newCharsCount; j++) {
-        const charIndex = prevTextLength.current + j;
-        const char = text[charIndex];
-        const color = getHebrewColor(char, school);
-        
-        for (let i = 0; i < 4; i++) {
-          particlesRef.current.push({
-            x: Math.random() * canvas.width, 
-            y: Math.random() * canvas.height, 
-            z: Math.random() * 2 + 0.5,
-            char: char, 
-            size: Math.random() * 12 + 10, 
-            color: color, 
-            textIndex: charIndex, 
-            dying: false,
-            vx: (Math.random() - 0.5) * 0.05, 
-            vy: (Math.random() - 0.5) * 0.05,
-            rotation: Math.random() * Math.PI * 2, 
-            rotationSpeed: (Math.random() - 0.5) * 0.005,
-            alpha: 0,
-          });
-        }
-      }
-    }
+      // LÓGICA DE DISTRIBUCIÓN UNIFORME
+      // El radio se distribuye linealmente desde el centro hasta los bordes (95vw)
+      const calculatedRadius = Math.random() * 95;
 
-    // Borrar
-    if (text.length < prevTextLength.current) {
-      particlesRef.current.forEach(p => { 
-        if (p.textIndex >= text.length) p.dying = true; 
-      });
-    }
-
-    // Actualizar color en vivo
-    particlesRef.current.forEach(p => { 
-      if (!p.dying) p.color = getHebrewColor(p.char, school); 
+      return {
+        id: i,
+        angle: Math.random() * Math.PI * 2,
+        radius: calculatedRadius, 
+        // Profundidad variada para efecto 3D
+        depth: Math.random() * 3 + 0.1,
+        // Tamaño variado
+        sizeBase: Math.random() * 0.5 + 0.2, 
+        // Velocidad: Más lento en el exterior
+        speed: (0.0001 + Math.random() * 0.0002) * (30 / (calculatedRadius + 5)) * (Math.random() > 0.5 ? 1 : -1),
+        char: '',
+        color: '#fff',
+        currentOpacity: 0,
+        targetOpacity: 0
+      };
     });
+    setStars(initialStars);
+  }, []);
 
-    prevTextLength.current = text.length;
-
+  // Sincronización con el Input
+  useEffect(() => {
+    setStars(prevStars => prevStars.map((star, index) => {
+      const charIndex = Math.floor(index / STARS_PER_CHAR);
+      
+      if (charIndex < text.length) {
+        return {
+          ...star,
+          char: text[charIndex],
+          color: getHebrewColor(text[charIndex], school),
+          targetOpacity: 1
+        };
+      } else {
+        return {
+          ...star,
+          targetOpacity: 0
+        };
+      }
+    }));
   }, [text, school]);
 
-  // 2. LOOP DE ANIMACIÓN
+  // Loop de Animación
+  const animate = () => {
+    setStars(prevStars => prevStars.map(star => {
+      if (star.currentOpacity < 0.01 && star.targetOpacity === 0) return star;
+
+      const newAngle = star.angle + star.speed;
+      const newOpacity = star.currentOpacity + (star.targetOpacity - star.currentOpacity) * 0.05;
+
+      return {
+        ...star,
+        angle: newAngle,
+        currentOpacity: newOpacity
+      };
+    }));
+    requestRef.current = requestAnimationFrame(animate);
+  };
+
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth; 
-      canvas.height = window.innerHeight;
-    };
-    handleResize(); // Asegurar tamaño inmediato
-    window.addEventListener('resize', handleResize);
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const currentText = textRef.current;
-      const currentSchool = schoolRef.current;
-      
-      const charToSpawn = currentText.length > 0 
-        ? currentText[Math.floor(Math.random() * currentText.length)] 
-        : 'א';
-      const colorToSpawn = getHebrewColor(charToSpawn, currentSchool);
-
-      for (let i = 0; i < 3; i++) { // Llama viva
-        fireRef.current.push({
-          x: e.clientX + (Math.random() - 0.5) * 4,
-          y: e.clientY + (Math.random() - 0.5) * 4,
-          vy: -2.5 - Math.random() * 2.5, 
-          life: 0,
-          maxLife: 40 + Math.random() * 30, 
-          size: Math.random() * 10 + 5,
-          char: charToSpawn,
-          color: colorToSpawn,
-          rotation: Math.random() * Math.PI,
-          rotationSpeed: (Math.random() - 0.5) * 0.1
-        });
-      }
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-
-    const animate = () => {
-      if (!canvas || !ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // FUEGO
-      ctx.globalCompositeOperation = 'lighter'; 
-      for (let i = fireRef.current.length - 1; i >= 0; i--) {
-        const p = fireRef.current[i];
-        p.life++;
-        if (p.life >= p.maxLife) { fireRef.current.splice(i, 1); continue; }
-        
-        const progress = p.life / p.maxLife;
-        const opacity = 1 - Math.pow(progress, 1.5); 
-        
-        p.y += p.vy; 
-        p.vy *= 0.96;
-        p.x += Math.sin(p.life * 0.1) * (progress * 1.5);
-        p.rotation += p.rotationSpeed;
-        p.size *= 1.02;
-
-        ctx.save();
-        ctx.translate(p.x, p.y); ctx.rotate(p.rotation);
-        ctx.font = `bold ${p.size}px "Times New Roman", serif`;
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = opacity * 0.4; 
-        ctx.shadowBlur = 20; ctx.shadowColor = p.color;
-        ctx.fillText(p.char, -p.size/2, p.size/2);
-        ctx.restore();
-      }
-      ctx.globalCompositeOperation = 'source-over';
-
-      // GALAXIA
-      for (let i = particlesRef.current.length - 1; i >= 0; i--) {
-        const p = particlesRef.current[i];
-        if (p.dying) { 
-          p.alpha -= 0.02; 
-          if (p.alpha <= 0) { particlesRef.current.splice(i, 1); continue; } 
-        } else { 
-          if (p.alpha < 1) p.alpha += 0.02; 
-        }
-
-        p.x += p.vx; p.y += p.vy; p.rotation += p.rotationSpeed;
-
-        ctx.save();
-        ctx.translate(p.x, p.y); 
-        const scale = p.z * 0.4 + 0.4; ctx.scale(scale, scale);
-        ctx.rotate(p.rotation);
-        
-        ctx.font = `bold ${p.size}px "Times New Roman", serif`;
-        ctx.fillStyle = p.color; 
-        
-        const twinkle = Math.sin(Date.now() * 0.002 + p.x) * 0.3 + 0.7;
-        ctx.globalAlpha = p.alpha * twinkle;
-        
-        ctx.shadowBlur = 20; ctx.shadowColor = p.color; 
-        ctx.fillText(p.char, -p.size/2, p.size/2);
-        ctx.restore();
-      }
-
-      requestAnimationFrame(animate);
-    };
-
-    const animId = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animId);
-    };
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
   }, []);
 
   return (
-    <canvas 
-      ref={canvasRef} 
-      className="block pointer-events-none" 
-      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: 'transparent' }} 
-    />
+    <div style={{ 
+      position: 'absolute', inset: 0, 
+      overflow: 'hidden', pointerEvents: 'none',
+      perspective: '1000px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center'
+    }}>
+      {/* Fondo Nebula sutil */}
+      <div style={{
+        position: 'absolute', width: '100%', height: '100%',
+        background: 'radial-gradient(circle at center, rgba(10,5,20,0.3) 0%, rgba(0,0,0,0) 70%)',
+        opacity: Math.min(text.length / 5, 1),
+        transition: 'opacity 3s ease',
+        zIndex: -1
+      }} />
+
+      {stars.map((star) => {
+        if (star.currentOpacity < 0.01) return null;
+
+        const x = Math.cos(star.angle) * star.radius;
+        const y = Math.sin(star.angle) * star.radius;
+        const scale = star.depth * (0.6 + star.currentOpacity * 0.4);
+
+        return (
+          <div
+            key={star.id}
+            style={{
+              position: 'absolute',
+              transform: `translate3d(${x}vw, ${y}vh, ${star.depth * 50}px) scale(${scale})`,
+              color: star.color,
+              fontSize: `${star.sizeBase}rem`,
+              opacity: star.currentOpacity,
+              textShadow: `0 0 ${5 * star.currentOpacity}px ${star.color}`,
+              fontFamily: '"Times New Roman", serif',
+              willChange: 'transform, opacity',
+              transition: 'color 1s ease',
+            }}
+          >
+            {star.char}
+          </div>
+        )
+      })}
+    </div>
   );
 };
